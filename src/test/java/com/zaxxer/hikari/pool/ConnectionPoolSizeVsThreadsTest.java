@@ -114,7 +114,7 @@ public class ConnectionPoolSizeVsThreadsTest {
 
          // collect pool usage data while work is still being done
          Counts underLoad = new Counts();
-         while (allThreadsDone.getCount() > 0) {
+         while (allThreadsDone.getCount() > 0 || pool.getTotalConnections() < minIdle) {
             Thread.sleep(100);
             underLoad.updateMaxCounts(pool);
          }
@@ -127,7 +127,7 @@ public class ConnectionPoolSizeVsThreadsTest {
          Counts postLoad = new Counts();
          if (postTestTime > 0) {
             long doneTime = System.currentTimeMillis() + postTestTime;
-            while (System.currentTimeMillis() >= doneTime) {
+            while (System.currentTimeMillis() < doneTime) {
                Thread.sleep(100);
                postLoad.updateMaxCounts(pool);
             }
